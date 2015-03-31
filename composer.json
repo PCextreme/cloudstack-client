@@ -1,0 +1,28 @@
+{
+    "name": "pcextreme/cloudstack-client",
+    "description": "Generic Cloudstack Client, compatible with the PCextreme Aurora Compute platform",
+    "keywords": [
+        "pcextreme",
+        "aurora",
+        "compute",
+        "cloudstack",
+        "client"
+    ],
+    "authors": [
+        {
+            "name": "Kevin Dierkx",
+            "email": "kevin@pcextreme.nl"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "~4.2",
+        "kevindierkx/elicit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "PCextreme\\CloudstackClient\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
