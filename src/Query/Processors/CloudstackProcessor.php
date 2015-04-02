@@ -1,9 +1,24 @@
 <?php namespace PCextreme\CloudstackClient\Query\Processors;
 
+use Illuminate\Support\Pluralizer;
 use Kevindierkx\Elicit\Query\Builder;
 use Kevindierkx\Elicit\Query\Processors\Processor;
 
 class CloudstackProcessor extends Processor {
+
+	/**
+	 * @var array
+	 */
+	protected $trimable = [
+		'list',
+		'create',
+		'update',
+		'delete',
+		'add',
+		'remove',
+		'authorize',
+		'revoke',
+	];
 
 	/**
 	 * Process the results of an API request.
@@ -14,19 +29,43 @@ class CloudstackProcessor extends Processor {
 	 */
 	protected function processRequest(Builder $query, $results)
 	{
-		// We assume that the first where is always the request method.
-		// This could change in the future and should be changed.
 		$method = reset($query->wheres)['value'];
 
-		$resultsResourceName = strtolower($method . 'response');
+		$responseName = strtolower($method . 'response');
+		$response = $results[$responseName];
 
-		if ( starts_with($method, 'list') && empty($results[$resultsResourceName]) ) {
-			return [];
+		$resourceName = strtolower($this->parseResourceName($method));
+		$resources = ! empty($response) ? $response[$resourceName] : null;
+
+		// When we don't have any resources we assume we have a 404 like reponse.
+		if ( ! is_null($resources) ) {
+			// We wrap the resources in an additional array when the
+			// response doesn't contain 2 items. This way the model parses
+			// the attributes as one model.
+			if ( count($response) < 2 ) {
+				return [$resources];
+			}
+
+			// When we have 2 items in the reponse we assume we have
+			// a collection. Returning the multidimensional array Cloudstack
+			// gave us results in a Elicit collection.
+			return $resources;
 		}
 
-		if ( isset($results[$resultsResourceName]) && count($results[$resultsResourceName]) >= 2 ) {
-			return array_pop($results[$resultsResourceName]);
-		}
+		return [];
+	}
+
+	/**
+	 * Parse the resource name from the called method.
+	 *
+	 * @param  string  $method
+	 * @return string
+	 */
+	protected function parseResourceName($method)
+	{
+		$plural = str_replace($this->trimable, null, $method);
+
+		return Pluralizer::singular($plural);
 	}
 
 }
