@@ -18,6 +18,7 @@ class CloudstackProcessor extends Processor {
 		'remove',
 		'authorize',
 		'revoke',
+		'register',
 	];
 
 	/**
