@@ -21,6 +21,13 @@ class CloudstackProcessor extends Processor {
 	];
 
 	/**
+	 * @var array
+	 */
+	protected $plural = [
+		'userkeys',
+	];
+
+	/**
 	 * Process the results of an API request.
 	 *
 	 * @param  \Kevindierkx\Elicit\Query\Builder  $query
@@ -34,7 +41,7 @@ class CloudstackProcessor extends Processor {
 		$responseName = strtolower($method . 'response');
 		$response = $results[$responseName];
 
-		$resourceName = strtolower($this->parseResourceName($method));
+		$resourceName = $this->parseResourceName($method);
 		$resources = ! empty($response) ? $response[$resourceName] : null;
 
 		// When we don't have any resources we assume we have a 404 like reponse.
@@ -63,7 +70,15 @@ class CloudstackProcessor extends Processor {
 	 */
 	protected function parseResourceName($method)
 	{
-		$plural = str_replace($this->trimable, null, $method);
+		$plural = strtolower(
+			str_replace($this->trimable, null, $method)
+		);
+
+		$isSingular = ! in_array($plural, $this->plural);
+
+		if ( ! $isSingular ) {
+			return $plural;
+		}
 
 		return Pluralizer::singular($plural);
 	}
