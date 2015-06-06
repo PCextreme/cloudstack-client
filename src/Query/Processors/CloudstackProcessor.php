@@ -4,84 +4,83 @@ use Illuminate\Support\Pluralizer;
 use Kevindierkx\Elicit\Query\Builder;
 use Kevindierkx\Elicit\Query\Processors\Processor;
 
-class CloudstackProcessor extends Processor {
+class CloudstackProcessor extends Processor
+{
+    /**
+     * @var array
+     */
+    protected $trimable = [
+        'list',
+        'create',
+        'update',
+        'delete',
+        'add',
+        'remove',
+        'authorize',
+        'revoke',
+        'register',
+    ];
 
-	/**
-	 * @var array
-	 */
-	protected $trimable = [
-		'list',
-		'create',
-		'update',
-		'delete',
-		'add',
-		'remove',
-		'authorize',
-		'revoke',
-		'register',
-	];
+    /**
+     * @var array
+     */
+    protected $plural = [
+        'userkeys',
+    ];
 
-	/**
-	 * @var array
-	 */
-	protected $plural = [
-		'userkeys',
-	];
+    /**
+     * Process the results of an API request.
+     *
+     * @param  \Kevindierkx\Elicit\Query\Builder  $query
+     * @param  array  $results
+     * @return array
+     */
+    protected function processRequest(Builder $query, $results)
+    {
+        $method = reset($query->wheres)['value'];
 
-	/**
-	 * Process the results of an API request.
-	 *
-	 * @param  \Kevindierkx\Elicit\Query\Builder  $query
-	 * @param  array  $results
-	 * @return array
-	 */
-	protected function processRequest(Builder $query, $results)
-	{
-		$method = reset($query->wheres)['value'];
+        $responseName = strtolower($method . 'response');
+        $response = $results[$responseName];
 
-		$responseName = strtolower($method . 'response');
-		$response = $results[$responseName];
+        $resourceName = $this->parseResourceName($method);
+        $resources = ! empty($response) ? $response[$resourceName] : null;
 
-		$resourceName = $this->parseResourceName($method);
-		$resources = ! empty($response) ? $response[$resourceName] : null;
+        // When we don't have any resources we assume we have a 404 like reponse.
+        if (! is_null($resources)) {
+            // We wrap the resources in an additional array when the
+            // response doesn't contain 2 items. This way the model parses
+            // the attributes as one model.
+            if (count($response) < 2) {
+                return [$resources];
+            }
 
-		// When we don't have any resources we assume we have a 404 like reponse.
-		if ( ! is_null($resources) ) {
-			// We wrap the resources in an additional array when the
-			// response doesn't contain 2 items. This way the model parses
-			// the attributes as one model.
-			if ( count($response) < 2 ) {
-				return [$resources];
-			}
+            // When we have 2 items in the reponse we assume we have
+            // a collection. Returning the multidimensional array Cloudstack
+            // gave us results in a Elicit collection.
+            return $resources;
+        }
 
-			// When we have 2 items in the reponse we assume we have
-			// a collection. Returning the multidimensional array Cloudstack
-			// gave us results in a Elicit collection.
-			return $resources;
-		}
+        return [];
+    }
 
-		return [];
-	}
+    /**
+     * Parse the resource name from the called method.
+     *
+     * @param  string  $method
+     * @return string
+     */
+    protected function parseResourceName($method)
+    {
+        $plural = strtolower(
+            str_replace($this->trimable, null, $method)
+        );
 
-	/**
-	 * Parse the resource name from the called method.
-	 *
-	 * @param  string  $method
-	 * @return string
-	 */
-	protected function parseResourceName($method)
-	{
-		$plural = strtolower(
-			str_replace($this->trimable, null, $method)
-		);
+        $isSingular = ! in_array($plural, $this->plural);
 
-		$isSingular = ! in_array($plural, $this->plural);
+        if (! $isSingular) {
+            return $plural;
+        }
 
-		if ( ! $isSingular ) {
-			return $plural;
-		}
-
-		return Pluralizer::singular($plural);
-	}
-
+        return Pluralizer::singular($plural);
+    }
 }

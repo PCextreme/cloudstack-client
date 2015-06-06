@@ -2,8 +2,8 @@
 
 use Kevindierkx\Elicit\Elicit\Model;
 
-class Cloudstack extends Model {
-
+class Cloudstack extends Model
+{
     /**
      * {@inheritDoc}
      */
@@ -44,7 +44,7 @@ class Cloudstack extends Model {
         // When the path could not be determined form the API list
         // the command most likely does not exist or is not available
         // for the user.
-        if ( is_null($path) ) {
+        if (is_null($path)) {
             $className = get_class($this);
 
             throw new \BadMethodCallException("Call to {$method}() is not available in the API list.");
@@ -61,11 +61,10 @@ class Cloudstack extends Model {
 
         // We make sure the provided query parameters are of
         // the type array before adding it to the query.
-        if ( is_array($queryParameters) && ! empty($queryParameters) ) {
+        if (is_array($queryParameters) && ! empty($queryParameters)) {
             $query->where($queryParameters);
         }
 
         return $query->get();
     }
-
 }
