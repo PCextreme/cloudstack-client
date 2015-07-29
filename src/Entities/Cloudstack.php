@@ -23,9 +23,11 @@ class Cloudstack extends Model
             'method' => 'GET',
         ],
 
-        // The deployment command of a virtual machine supports POST requests.
-        // This way you can send larger amounts of user data.
+        // A few commands only support POST HTTP methods.
+        // The deployVirtualMachine command supports both,
+        // but it can handle more userdata using the POST method.
         'deployVirtualMachine' => ['method' => 'POST'],
+        'login' => ['method' => 'POST'],
     ];
 
     /**
