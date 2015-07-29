@@ -80,7 +80,7 @@ class CloudstackProcessor extends Processor
     {
         // Here we check if the method is returned with
         // a different resource name.
-        if (in_array($method, $this->resourceResponseNames)) {
+        if (isset($this->resourceResponseNames[$method])) {
             return $this->resourceResponseNames[$method];
         }
 
