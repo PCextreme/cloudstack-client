@@ -24,8 +24,15 @@ class CloudstackProcessor extends Processor
     /**
      * @var array
      */
-    protected $plural = [
+    protected $pluralResponseNames = [
         'userkeys',
+    ];
+
+    /**
+     * @var array
+     */
+    protected $resourceResponseNames = [
+        'changeServiceForVirtualMachine' => 'virtualmachine',
     ];
 
     /**
@@ -71,16 +78,23 @@ class CloudstackProcessor extends Processor
      */
     protected function parseResourceName($method)
     {
+        // Here we check if the method is returned with
+        // a different resource name.
+        if (in_array($method, $this->resourceResponseNames)) {
+            return $this->resourceResponseNames[$method];
+        }
+
         $plural = strtolower(
             str_replace($this->trimable, null, $method)
         );
 
-        $isSingular = ! in_array($plural, $this->plural);
-
-        if (! $isSingular) {
+        // Here we check if the method is returned with
+        // a plural resource name.
+        if (in_array($plural, $this->pluralResponseNames)) {
             return $plural;
         }
 
+        // Lastly we create a singular resource name.
         return Pluralizer::singular($plural);
     }
 }
