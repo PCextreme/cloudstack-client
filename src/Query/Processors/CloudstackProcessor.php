@@ -10,15 +10,16 @@ class CloudstackProcessor extends Processor
      * @var array
      */
     protected $trimable = [
-        'list',
-        'create',
-        'update',
-        'delete',
         'add',
-        'remove',
         'authorize',
-        'revoke',
+        'create',
+        'delete',
+        'get',
+        'list',
         'register',
+        'remove',
+        'revoke',
+        'update',
     ];
 
     /**
@@ -33,6 +34,7 @@ class CloudstackProcessor extends Processor
      */
     protected $resourceResponseNames = [
         'changeServiceForVirtualMachine' => 'virtualmachine',
+        'getVirtualMachineUserData' => 'virtualmachineuserdata',
     ];
 
     /**
