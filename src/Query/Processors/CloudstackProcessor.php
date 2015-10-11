@@ -35,6 +35,7 @@ class CloudstackProcessor extends Processor
     protected $resourceResponseNames = [
         'changeServiceForVirtualMachine' => 'virtualmachine',
         'getVirtualMachineUserData' => 'virtualmachineuserdata',
+        'login' => null,
     ];
 
     /**
@@ -52,14 +53,14 @@ class CloudstackProcessor extends Processor
         $response = $results[$responseName];
 
         $resourceName = $this->parseResourceName($method);
-        $resources = ! empty($response) ? $response[$resourceName] : null;
+        $resources = ! is_null($resourceName) ? $response[$resourceName] : $response;
 
         // When we don't have any resources we assume we have a 404 like reponse.
-        if (! is_null($resources)) {
+        if (! empty($resources)) {
             // We wrap the resources in an additional array when the
             // response doesn't contain 2 items. This way the model parses
             // the attributes as one model.
-            if (count($response) < 2) {
+            if (count($response) < 2 || is_null($resourceName)) {
                 return [$resources];
             }
 
@@ -82,7 +83,7 @@ class CloudstackProcessor extends Processor
     {
         // Here we check if the method is returned with
         // a different resource name.
-        if (isset($this->resourceResponseNames[$method])) {
+        if (array_key_exists($method, $this->resourceResponseNames)) {
             return $this->resourceResponseNames[$method];
         }
 

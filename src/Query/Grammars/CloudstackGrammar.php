@@ -15,20 +15,65 @@ class CloudstackGrammar extends Grammar
     {
         $connection = $query->getConnection();
 
+        $ssoSigned = false;
+
         $wheres = [
-            'apiKey' => $connection->getConfig('identifier'),
             'timestamp' => round(microtime(true) * 1000),
-            'response' => 'json',
+            'response'  => 'json',
         ];
 
         foreach ($query->wheres as $where) {
             $wheres[$where['column']] = $where['value'];
         }
 
-        // The secret used for signing the request. Depending on the request this
-        // is either the user API secret or the SSO key.
-        $secret = $connection->getConfig('secret');
+        if (isset($wheres['sso_signed'])) {
+            $ssoSigned = (bool) $wheres['sso_signed'];
 
+            unset($wheres['sso_signed']);
+        }
+
+        if ($ssoSigned) {
+            return $this->signSsoRequest($wheres, $connection);
+        }
+
+        return $this->signDefaultRequest($wheres, $connection);
+    }
+
+    /**
+     * Sign a defualt request using the APIs 'identifier' and 'secret'.
+     *
+     * @param   array                                    $wheres
+     * @param   \Kevindierkx\Elicit\ConnectionInterface  $connection
+     * @return  string
+     */
+    protected function signDefaultRequest(array $wheres, $connection)
+    {
+        $wheres['apiKey'] = $connection->getConfig('identifier');
+
+        return $this->signRequest($wheres, $connection->getConfig('secret'));
+    }
+
+    /**
+     * Sign a 'single sign on' request using the APIs 'sso_key'.
+     *
+     * @param   array                                    $wheres
+     * @param   \Kevindierkx\Elicit\ConnectionInterface  $connection
+     * @return  string
+     */
+    protected function signSsoRequest(array $wheres, $connection)
+    {
+        return $this->signRequest($wheres, $connection->getConfig('sso_key'));
+    }
+
+    /**
+     * Sign the request with the provided secret.
+     *
+     * @param  array   $wheres
+     * @param  string  $secret
+     * @return string
+     */
+    protected function signRequest(array $wheres, $secret)
+    {
         ksort($wheres);
 
         $parsedWheres = http_build_query($wheres, false, '&', PHP_QUERY_RFC3986);

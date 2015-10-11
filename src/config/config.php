@@ -18,19 +18,19 @@ return [
         'identifier' => '',
         'secret'     => '',
 
+        /*
+        |--------------------------------------------------------------------------
+        | Single Sign On Key
+        |--------------------------------------------------------------------------
+        |
+        | The single sign on key is used for signing client and console URIs.
+        | This key is generally only available to Cloudstack administrators.
+        |
+        */
+
+        'sso_key'     => '',
+
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Single Sign On Key
-    |--------------------------------------------------------------------------
-    |
-    | The single sign on key is used for signing client and console URIs.
-    | This key is generally only available to Cloudstack administrators.
-    |
-    */
-
-    'sso_key'     => '',
 
     /*
     |--------------------------------------------------------------------------
