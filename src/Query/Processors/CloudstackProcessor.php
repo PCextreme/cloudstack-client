@@ -62,7 +62,7 @@ class CloudstackProcessor extends Processor
         $response = $results[$responseName];
 
         $resourceName = $this->parseResourceName($method);
-        $resources = ! is_null($resourceName) ? $response[$resourceName] : $response;
+        $resources = ! is_null($resourceName) && isset($response[$resourceName]) ? $response[$resourceName] : $response;
 
         // When we don't have any resources we assume we have a 404 like reponse.
         if (! empty($resources)) {
