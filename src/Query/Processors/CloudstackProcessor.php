@@ -35,7 +35,16 @@ class CloudstackProcessor extends Processor
     protected $resourceResponseNames = [
         'changeServiceForVirtualMachine' => 'virtualmachine',
         'getVirtualMachineUserData' => 'virtualmachineuserdata',
+
         'login' => null,
+
+        'startVirtualMachine' => null,
+        'stopVirtualMachine' => null,
+        'rebootVirtualMachine' => null,
+        'restoreVirtualMachine' => null,
+        'destroyVirtualMachine' => null,
+
+        'queryAsyncJobResult' => null,
     ];
 
     /**
