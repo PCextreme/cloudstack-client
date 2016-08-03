@@ -1,10 +1,12 @@
-## Cloudstack Client
+**This package is deprecated and will be replaced in the near future**
+
+# Cloudstack Client
 
 The ```cloudstack-client``` is a PHP based Cloudstack API ORM.
 
 The Cloudstack Client utilises the [kevindierkx/elicit](https://github.com/kevindierkx/elicit) API ORM and supports all major functionality.
 
-### Installation
+## Installation
 
 **Currently the Cloudstack Client only supports [Laravel](http://laravel.com) based applications, support for native PHP will be added in the future.**
 
@@ -43,7 +45,7 @@ Optionaly you can add the following line to your aliases to utilise the provided
 ]
 ```
 
-### Configuration
+## Configuration
 
 Run the following command to publish the package configuration:
 
@@ -55,7 +57,7 @@ This will add the package configuration to your packages folder ```app/config/pa
 
 *SSO keys are generally only for Cloudstack administrators and are not required.*
 
-### Usage
+## Usage
 
 When using the Cloudstack facade you can call all commands available to your Cloudstack user directly.
 
@@ -70,10 +72,10 @@ When Cloudstack returns multiple results the Cloudstack Client would return an i
 
 **Please note that the ```api-list.php``` is required for every direct request. The Cloudstack Client provides this file by default and is located in the ```cache/``` folder withing this package.**
 
-### Credits
+## Credits
 
 - [Kevin Dierkx](https://github.com/kevindierkx)
 
-### License
+## License
 
 The MIT License (MIT). Please see [License File](https://github.com/PCextreme/cloudstack-client/blob/master/LICENSE) for more information.
