@@ -14,7 +14,7 @@ return [
 
     'connection' => [
 
-        'host'       => 'https://cloud.pcextreme.nl/client/api',
+        'host'       => 'https://api.auroracompute.eu/ams',
         'identifier' => '',
         'secret'     => '',
 
